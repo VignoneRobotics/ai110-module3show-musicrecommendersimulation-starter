@@ -4,9 +4,13 @@ Command line runner for VibeFinder 1.0.
 Run from the repo root:
     python -m src.main               # default weights
     python -m src.main --experiment  # Phase 4 weight-shift experiment
+    python -m src.main --diverse     # apply the artist/genre diversity penalty
+(flags can be combined)
 """
 
 import sys
+
+from tabulate import tabulate
 
 from src.recommender import (
     load_songs,
@@ -26,15 +30,15 @@ PROFILES = {
 
 
 def print_recommendations(name: str, prefs: dict, recs: list) -> None:
-    """Print one profile's top results with scores and reasons."""
-    print("=" * 64)
-    print(f"Profile: {name}")
-    print(f"  prefs -> genre={prefs['genre']}, mood={prefs['mood']}, energy={prefs['energy']}")
-    print("-" * 64)
-    for rank, (song, score, explanation) in enumerate(recs, start=1):
-        print(f"{rank}. {song['title']} - {song['artist']}  [{song['genre']}/{song['mood']}]")
-        print(f"   Score: {score:.2f}")
-        print(f"   Why:   {explanation}")
+    """Print one profile's top results as a table with scores and reasons."""
+    print(f"Profile: {name}  (genre={prefs['genre']}, mood={prefs['mood']}, energy={prefs['energy']})")
+    rows = [
+        [rank, song["title"], song["artist"], f"{song['genre']}/{song['mood']}",
+         f"{score:.2f}", explanation.replace("; ", "\n")]
+        for rank, (song, score, explanation) in enumerate(recs, start=1)
+    ]
+    print(tabulate(rows, headers=["#", "Title", "Artist", "Genre/Mood", "Score", "Why"],
+                   tablefmt="simple_grid", disable_numparse=True))
     print()
 
 
@@ -43,11 +47,13 @@ def main() -> None:
     songs = load_songs("data/songs.csv")
 
     experiment = "--experiment" in sys.argv
+    diverse = "--diverse" in sys.argv
     weights = EXPERIMENT_WEIGHTS if experiment else DEFAULT_WEIGHTS
-    print(f"Weights: {weights}{'  (EXPERIMENT)' if experiment else ''}\n")
+    print(f"Weights: {weights}{'  (EXPERIMENT)' if experiment else ''}")
+    print(f"Diversity penalty: {'ON' if diverse else 'OFF'}\n")
 
     for name, prefs in PROFILES.items():
-        recs = recommend_songs(prefs, songs, k=5, weights=weights)
+        recs = recommend_songs(prefs, songs, k=5, weights=weights, diverse=diverse)
         print_recommendations(name, prefs, recs)
 
 

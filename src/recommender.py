@@ -23,6 +23,27 @@ EXPERIMENT_WEIGHTS = {
     "energy": 2.0,
 }
 
+# Partial credit: labels in the same "family" earn PARTIAL_CREDIT x the full weight.
+# Fixes the exact-match bias ("indie pop" earned nothing from a "pop" fan).
+PARTIAL_CREDIT = 0.5
+RELATED_GENRES = [
+    {"pop", "indie pop"},
+    {"hip-hop", "lofi"},        # lofi grew out of chilled-out hip-hop beats
+    {"rock", "metal"},
+    {"edm", "synthwave"},
+    {"folk", "country"},
+]
+RELATED_MOODS = [
+    {"chill", "relaxed", "peaceful", "focused"},
+    {"intense", "angry"},
+    {"happy", "playful", "euphoric"},
+    {"sad", "moody", "nostalgic"},
+]
+
+# Diversity penalty (applied while picking the top k, not to the raw score).
+ARTIST_REPEAT_PENALTY = 1.0   # per song by the same artist already picked
+GENRE_REPEAT_PENALTY = 0.5    # per song of the same genre already picked
+
 NUMERIC_FIELDS = {
     "id": int,
     "energy": float,
@@ -109,19 +130,29 @@ def load_songs(csv_path: str) -> List[Dict]:
     return songs
 
 
+def _label_points(wanted: str, actual: str, families: List[set], weight: float) -> Tuple[float, str]:
+    """Return (points, kind): full weight for an exact match, partial for a related label."""
+    wanted, actual = wanted.lower(), actual.lower()
+    if wanted == actual:
+        return weight, "match"
+    if any(wanted in fam and actual in fam for fam in families):
+        return weight * PARTIAL_CREDIT, "related"
+    return 0.0, ""
+
+
 def score_song(user_prefs: Dict, song: Dict, weights: Dict = None) -> Tuple[float, List[str]]:
     """Score one song against the user's prefs; return (score, list of reasons)."""
     w = weights or DEFAULT_WEIGHTS
     score = 0.0
     reasons = []
 
-    if song["genre"].lower() == user_prefs["genre"].lower():
-        score += w["genre"]
-        reasons.append(f"genre match: {song['genre']} (+{w['genre']:.1f})")
-
-    if song["mood"].lower() == user_prefs["mood"].lower():
-        score += w["mood"]
-        reasons.append(f"mood match: {song['mood']} (+{w['mood']:.1f})")
+    for feature, families in (("genre", RELATED_GENRES), ("mood", RELATED_MOODS)):
+        points, kind = _label_points(user_prefs[feature], song[feature], families, w[feature])
+        if kind == "match":
+            reasons.append(f"{feature} match: {song[feature]} (+{points:.1f})")
+        elif kind == "related":
+            reasons.append(f"related {feature}: {song[feature]} ~ {user_prefs[feature]} (+{points:.1f})")
+        score += points
 
     # Closeness, not "more is better": a perfect match earns the full weight,
     # and points shrink as the gap between song and target grows.
@@ -136,11 +167,33 @@ def score_song(user_prefs: Dict, song: Dict, weights: Dict = None) -> Tuple[floa
 
 
 def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5,
-                    weights: Dict = None) -> List[Tuple[Dict, float, str]]:
-    """Score every song, sort highest-first, and return the top k as (song, score, explanation)."""
+                    weights: Dict = None, diverse: bool = False) -> List[Tuple[Dict, float, str]]:
+    """Score every song, then return the top k as (song, score, explanation), best first."""
     scored = []
     for song in songs:
         score, reasons = score_song(user_prefs, song, weights)
         scored.append((song, score, "; ".join(reasons)))
     # sorted() returns a NEW list and leaves `scored` untouched (.sort() would mutate it).
-    return sorted(scored, key=lambda item: item[1], reverse=True)[:k]
+    ranked = sorted(scored, key=lambda item: item[1], reverse=True)
+    if not diverse:
+        return ranked[:k]
+    return _diversify(ranked, k)
+
+
+def _diversify(ranked: List[Tuple[Dict, float, str]], k: int) -> List[Tuple[Dict, float, str]]:
+    """Greedy re-rank: pick one song at a time, penalizing artists/genres already picked."""
+    picked, remaining = [], list(ranked)
+    while remaining and len(picked) < k:
+        best_i, best_score, best_note = 0, float("-inf"), ""
+        for i, (song, score, _) in enumerate(remaining):
+            same_artist = sum(p[0]["artist"] == song["artist"] for p in picked)
+            same_genre = sum(p[0]["genre"] == song["genre"] for p in picked)
+            penalty = same_artist * ARTIST_REPEAT_PENALTY + same_genre * GENRE_REPEAT_PENALTY
+            if score - penalty > best_score:
+                best_i, best_score = i, score - penalty
+                best_note = f"diversity penalty (-{penalty:.1f})" if penalty else ""
+        song, _, explanation = remaining.pop(best_i)
+        if best_note:
+            explanation = f"{explanation}; {best_note}"
+        picked.append((song, round(best_score, 2), explanation))
+    return picked
