@@ -76,7 +76,7 @@ A step-by-step record of how this project was built. Each step shows **where** t
 | # | Where | What we did | Why | Rubric |
 |---|---|---|---|---|
 | 5.1 | 📝 | Completed model card sections 1–8 | Industry practice: document intended use, data limits, and known biases. | Model card (3 pts) |
-| 5.2 | 📝 | **Kyle writes** section 9 (Personal Reflection) and the README *Reflection* | A reflection only counts if it's yours. | Submission: reflection |
+| 5.2 | 📝🤖 | Kyle answered the reflection prompts; AI tightened the wording and drafted the README *Reflection* from those answers and the findings | The ideas and decisions are Kyle's; AI shaped the prose. | Submission: reflection |
 
 **Commit + push:** `git add WALKTHROUGH.md` → `git commit -m "Add side-by-side build walkthrough"`, then after the reflection: `git add README.md model_card.md` → `git commit -m "Add personal reflection"` → `git push origin main`
 
@@ -90,7 +90,7 @@ A step-by-step record of how this project was built. Each step shows **where** t
 | Structured song dataset | `data/songs.csv` (20 songs, 7 attributes) |
 | Scoring function | `src/recommender.py` → `score_song` |
 | Sorted recommendation function | `src/recommender.py` → `recommend_songs` |
-| Explanations for recommendations | "Why:" lines in README *Sample Output* |
+| Explanations for recommendations | "Why" column in README *Sample Output* tables |
 | Experiments with multiple profiles | README *Sample Output* + *Experiments*, model card §7 |
 | Completed model card | `model_card.md` |
 | Stretch: Diversity/fairness (+2) | `_diversify()` in `src/recommender.py`; model card §6 *Diversity penalty and fairness* |

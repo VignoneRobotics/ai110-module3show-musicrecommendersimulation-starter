@@ -94,8 +94,10 @@ Without a diversity rule, a top 5 can fill up with one artist or one genre, whic
 
 ## 9. Personal Reflection
 
-<!-- KYLE: your own words. Prompts from the lab:
-     - What was your biggest learning moment during this project?
-     - How did using AI tools help you, and when did you need to double-check them?
-     - What surprised you about how simple algorithms can still "feel" like recommendations?
-     - What would you try next if you extended this project? -->
+**Biggest learning moment:** My first instinct was to add −1 and −2 penalties for mismatches on top of the +1 and +2 rewards. Talking it through with AI showed me that a ranking only cares about the *gap* between songs, so a −2 penalty is just a disguised +4 genre weight. That changed my approach: instead of widening gaps for misses, I used partial credit (+1.0 for a related genre, +0.5 for a related mood) to *narrow* them for near-misses.
+
+**How AI helped:** AI wrote most of the code. My role was closer to a project planner. I weighed the options at each phase, decided which direction to take, and raised concerns before each step went ahead.
+
+**What surprised me:** Three simple rules and a sort produced a #1 pick for my chill profile (*Velvet Corners*) that genuinely felt right, using nothing but two labels and one energy number. It made me realize how much of the "magic" in real apps might come from simple scoring plus a lot more data.
+
+**What I'd try next:** I'd add listening history, such as skips and replays, to turn this into a hybrid that learns from behavior instead of relying only on song labels. I'd also put the unused fields to work (`likes_acoustic`, tempo, and valence), since right now the system ignores most of what it knows about each song.

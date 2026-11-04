@@ -371,6 +371,8 @@ See the [**Model Card**](model_card.md) for the full analysis.
 
 ## Reflection
 
-<!-- KYLE: write 1–2 paragraphs in your own words:
-     - how recommenders turn data into predictions
-     - where bias or unfairness could show up in systems like this -->
+Read the full [**Model Card**](model_card.md).
+
+Building VibeFinder made the path from data to prediction concrete. Every recommendation starts as features (genre, mood, energy), gets compared against a user's stated preferences by a scoring rule, and only becomes a "recommendation" after a ranking rule sorts every song against every other. Real systems like Spotify follow the same shape. The difference is that they learn their weights from millions of users' plays and skips, while mine were set by hand. That makes mine easy to explain, but only as good as my guesses.
+
+Bias showed up quickly, and in places I didn't expect. Exact label matching meant "indie pop" scored zero for a pop fan, and a heavy genre weight pushed an intense gym track into a chill listener's list. Partial credit fixed those, but it also introduced a new kind of bias: someone had to decide which genres count as "related", and that was a judgment call. Even after adding a diversity penalty, *Gym Hero* still showed up for four of five profiles. That's a small version of how real platforms keep resurfacing the same popular tracks and narrow what people discover.
