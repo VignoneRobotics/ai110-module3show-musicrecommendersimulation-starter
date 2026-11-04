@@ -61,13 +61,13 @@ Without a diversity rule, a top 5 can fill up with one artist or one genre, whic
 
 ## 7. Evaluation
 
-**Profiles tested:** High-Energy Pop, Kyle – Chill Hip-Hop, Gym – Intense Hip-Hop, Deep Intense Rock, and an adversarial "Sad but Hyped" profile (pop, sad, energy 0.9). Full outputs are in the README under *Sample Recommendation Output*.
+**Profiles tested:** High-Energy Pop, Steve – Chill Hip-Hop, Gym – Intense Hip-Hop, Deep Intense Rock, and an adversarial "Sad but Hyped" profile (pop, sad, energy 0.9). Full outputs are in the README under *Sample Recommendation Output*.
 
 **What I looked for:** whether the #1 song "felt right", whether the explanations matched the math, and whether a song showed up where it didn't belong.
 
 **Comparisons between profiles:**
 
-- **Kyle (chill hip-hop) vs. Gym (intense hip-hop):** Same genre, opposite energy. The #1 flips: *Velvet Corners* (0.38 energy) for chill, *Iron Reps* (0.94) for gym. The chill list fills out with chill lofi tracks (related genre plus mood match). The gym list, though, still pulls in the two *calmer* hip-hop songs at #2–#3 on genre points alone, ahead of intense rock and pop. The genre bonus is strong enough to override a 0.5 energy gap.
+- **Steve (chill hip-hop) vs. Gym (intense hip-hop):** Same genre, opposite energy. The #1 flips: *Velvet Corners* (0.38 energy) for chill, *Iron Reps* (0.94) for gym. The chill list fills out with chill lofi tracks (related genre plus mood match). The gym list, though, still pulls in the two *calmer* hip-hop songs at #2–#3 on genre points alone, ahead of intense rock and pop. The genre bonus is strong enough to override a 0.5 energy gap.
 - **High-Energy Pop vs. Deep Intense Rock:** Both want high energy, so *Gym Hero* appears in both: through the genre match for pop, through the "intense" mood match for rock. Same song, two different reasons, which shows how one high-energy track slips into many lists.
 - **Gym vs. Deep Intense Rock:** They share the "intense" mood, so *Storm Runner*, *Iron Reps*, and *Gym Hero* appear in both lists in different orders. Genre decides #1. *Broken Static* (metal) now shows up for rock through the rock–metal family.
 - **High-Energy Pop vs. Sad but Hyped (adversarial):** Both ask for pop, so pop songs dominate both lists. No song is both sad and high-energy, so the system falls back on genre and energy. The only truly sad song (*Salt and Sorrow*) sits at #4 because its energy is far off. Contradictory requests get the "least wrong" answer, not a good one.
@@ -77,7 +77,7 @@ Without a diversity rule, a top 5 can fill up with one artist or one genre, whic
 **Experiments:**
 
 1. **Partial label credit:** removed *Iron Reps* from the chill top 5 and moved *Rooftop Lights* to #2 for happy pop. Kept as the default.
-2. **Weight shift** (genre 2→1, energy 1→2): pushed chill lofi songs above "relaxed" hip-hop for Kyle, making the list more about vibe than genre. Recommendations got **more accurate** for vibe-based listeners, at the cost of genre loyalty.
+2. **Weight shift** (genre 2→1, energy 1→2): pushed chill lofi songs above "relaxed" hip-hop for Steve, making the list more about vibe than genre. Recommendations got **more accurate** for vibe-based listeners, at the cost of genre loyalty.
 3. **Diversity penalty:** more variety per list, with an occasional weaker fit (see section 6).
 
 **Automated tests:** `pytest`; both starter tests pass (pop/happy song ranks first; explanations are non-empty).

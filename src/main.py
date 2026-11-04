@@ -21,7 +21,7 @@ from src.recommender import (
 
 PROFILES = {
     "High-Energy Pop": {"genre": "pop", "mood": "happy", "energy": 0.8},
-    "Kyle - Chill Hip-Hop": {"genre": "hip-hop", "mood": "chill", "energy": 0.35},
+    "Steve - Chill Hip-Hop": {"genre": "hip-hop", "mood": "chill", "energy": 0.35},
     "Gym - Intense Hip-Hop": {"genre": "hip-hop", "mood": "intense", "energy": 0.92},
     "Deep Intense Rock": {"genre": "rock", "mood": "intense", "energy": 0.9},
     # Adversarial: no song in the catalog is both "sad" and high-energy.

@@ -1,4 +1,4 @@
-# 🧭 Walkthrough: How This Project Was Built (Side-by-Side Reference)
+# 🧭 Walkthrough: How This Project Was Built
 
 A step-by-step record of how this project was built. Each step shows **where** the work happened, **what** was done, **why**, and which **rubric item** it earns.
 
@@ -29,7 +29,7 @@ A step-by-step record of how this project was built. Each step shows **where** t
 | # | Where | What we did | Why | Rubric |
 |---|---|---|---|---|
 | 2.1 | 🤖📝 | Added 10 songs (ids 11–20) to `songs.csv`: 3 hip-hop + country, metal, classical, EDM, folk, R&B, Latin | Starter had 10 songs and **no hip-hop**, so the personal profile would have had nothing to match. New songs add missing genres and moods (sad, angry, euphoric…). | Dataset ≥15–20 songs, ≥3 attributes (3 pts) |
-| 2.2 | 📝 | Defined 5 profiles: High-Energy Pop, Kyle (chill hip-hop), Gym (intense hip-hop), Deep Intense Rock, Sad-but-Hyped (adversarial) | Two profiles share a genre but have opposite vibes, which is a clean test of whether genre overpowers vibe. The adversarial one asks for something that doesn't exist. | ≥3 distinct profiles |
+| 2.2 | 📝 | Defined 5 profiles: High-Energy Pop, Steve (chill hip-hop), Gym (intense hip-hop), Deep Intense Rock, Sad-but-Hyped (adversarial) | Two profiles share a genre but have opposite vibes, which is a clean test of whether genre overpowers vibe. The adversarial one asks for something that doesn't exist. | ≥3 distinct profiles |
 | 2.3 | 🤖 | Decided on recipe: **genre +2, mood +1, energy up to +1**. Considered and **rejected** −2/−1 mismatch penalties | Ranking only cares about *gaps* between songs, so a −2 penalty is just a disguised +4 genre weight. | Scoring function |
 | 2.4 | 📝 | Documented recipe, data-flow sketch, and expected biases in `README.md` | Predicting bias *before* testing makes the Phase 4 results meaningful. | — |
 
@@ -76,7 +76,7 @@ A step-by-step record of how this project was built. Each step shows **where** t
 | # | Where | What we did | Why | Rubric |
 |---|---|---|---|---|
 | 5.1 | 📝 | Completed model card sections 1–8 | Industry practice: document intended use, data limits, and known biases. | Model card (3 pts) |
-| 5.2 | 📝🤖 | Kyle answered the reflection prompts; AI tightened the wording and drafted the README *Reflection* from those answers and the findings | The ideas and decisions are Kyle's; AI shaped the prose. | Submission: reflection |
+| 5.2 | 📝🤖 | Steve answered the reflection prompts; AI tightened the wording and drafted the README *Reflection* from those answers and the findings | The ideas and decisions are Steve's; AI shaped the prose. | Submission: reflection |
 
 **Commit + push:** `git add WALKTHROUGH.md` → `git commit -m "Add side-by-side build walkthrough"`, then after the reflection: `git add README.md model_card.md` → `git commit -m "Add personal reflection"` → `git push origin main`
 

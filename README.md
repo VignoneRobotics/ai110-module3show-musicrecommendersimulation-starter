@@ -136,7 +136,7 @@ Profile: High-Energy Pop  (genre=pop, mood=happy, energy=0.8)
 │     │                  │               │                 │         │ energy 0.95 vs target 0.80 (+0.85)    │
 └─────┴──────────────────┴───────────────┴─────────────────┴─────────┴───────────────────────────────────────┘
 
-Profile: Kyle - Chill Hip-Hop  (genre=hip-hop, mood=chill, energy=0.35)
+Profile: Steve - Chill Hip-Hop  (genre=hip-hop, mood=chill, energy=0.35)
 ┌─────┬───────────────────┬────────────────┬─────────────────┬─────────┬──────────────────────────────────────┐
 │ #   │ Title             │ Artist         │ Genre/Mood      │ Score   │ Why                                  │
 ├─────┼───────────────────┼────────────────┼─────────────────┼─────────┼──────────────────────────────────────┤
@@ -232,7 +232,7 @@ Profile: Edge Case - Sad but Hyped  (genre=pop, mood=sad, energy=0.9)
 
 The first version only gave points for **exact** label matches. Running the profiles exposed two problems:
 
-- For **Kyle – Chill Hip-Hop**, *Iron Reps* (an intense 0.94-energy gym track) ranked **#3**, above two genuinely chill lofi songs, purely because it is labeled hip-hop.
+- For **Steve – Chill Hip-Hop**, *Iron Reps* (an intense 0.94-energy gym track) ranked **#3**, above two genuinely chill lofi songs, purely because it is labeled hip-hop.
 - For **High-Energy Pop**, *Rooftop Lights* (indie pop, happy) got **zero** genre credit and sat below *Gym Hero*.
 
 Adding half credit for related labels fixed both: *Iron Reps* drops out of the chill top 5 (replaced by chill lofi tracks), and *Rooftop Lights* rises to #2 for happy pop. *Gym Hero* still appears in 4 of 5 profiles.
@@ -266,7 +266,7 @@ Profile: High-Energy Pop  (genre=pop, mood=happy, energy=0.8)
 │     │                  │               │                 │         │ energy 0.95 vs target 0.80 (+1.70)    │
 └─────┴──────────────────┴───────────────┴─────────────────┴─────────┴───────────────────────────────────────┘
 
-Profile: Kyle - Chill Hip-Hop  (genre=hip-hop, mood=chill, energy=0.35)
+Profile: Steve - Chill Hip-Hop  (genre=hip-hop, mood=chill, energy=0.35)
 ┌─────┬───────────────────┬────────────────┬─────────────────┬─────────┬──────────────────────────────────────┐
 │ #   │ Title             │ Artist         │ Genre/Mood      │ Score   │ Why                                  │
 ├─────┼───────────────────┼────────────────┼─────────────────┼─────────┼──────────────────────────────────────┤
@@ -292,7 +292,7 @@ Profile: Kyle - Chill Hip-Hop  (genre=hip-hop, mood=chill, energy=0.35)
 └─────┴───────────────────┴────────────────┴─────────────────┴─────────┴──────────────────────────────────────┘
 ```
 
-- **Kyle:** chill lofi songs move to #2 and #3, ahead of *Rainy Window Bars* (hip-hop but only "relaxed"). The list becomes more about *vibe* than *genre*.
+- **Steve:** chill lofi songs move to #2 and #3, ahead of *Rainy Window Bars* (hip-hop but only "relaxed"). The list becomes more about *vibe* than *genre*.
 - **High-Energy Pop:** same top 3 order, but the scores spread out and non-pop songs with the right energy close the gap.
 - **Verdict:** more accurate for vibe-based listeners; weaker for genre-loyal ones. Defaults were kept so genre still leads.
 
@@ -303,7 +303,7 @@ Loaded songs: 20
 Weights: {'genre': 2.0, 'mood': 1.0, 'energy': 1.0}
 Diversity penalty: ON
 
-Profile: Kyle - Chill Hip-Hop  (genre=hip-hop, mood=chill, energy=0.35)
+Profile: Steve - Chill Hip-Hop  (genre=hip-hop, mood=chill, energy=0.35)
 ┌─────┬────────────────────┬────────────────┬─────────────────┬─────────┬──────────────────────────────────────┐
 │ #   │ Title              │ Artist         │ Genre/Mood      │ Score   │ Why                                  │
 ├─────┼────────────────────┼────────────────┼─────────────────┼─────────┼──────────────────────────────────────┤
@@ -352,7 +352,7 @@ Profile: Gym - Intense Hip-Hop  (genre=hip-hop, mood=intense, energy=0.92)
 └─────┴───────────────────┴───────────────┴─────────────────┴─────────┴──────────────────────────────────────┘
 ```
 
-- **Kyle:** the second LoRoom/lofi track (*Focus Flow*) is pushed out, and *Spacewalk Thoughts* (ambient, chill) enters, so the list now spans hip-hop, lofi, and ambient.
+- **Steve:** the second LoRoom/lofi track (*Focus Flow*) is pushed out, and *Spacewalk Thoughts* (ambient, chill) enters, so the list now spans hip-hop, lofi, and ambient.
 - **Gym:** only two hip-hop songs survive, and *Velvet Corners* (chill) is dropped. **Side effect:** *Midnight Coding* (a chill lofi track) fills slot #5. Diversity bought variety at the cost of fit.
 
 ---
