@@ -20,13 +20,15 @@
 
 Think of it as a judge with a scorecard that looks at every song one at a time.
 
-- If the song's **genre** is exactly the user's favorite, it gets **2 points**.
-- If the song's **mood** is exactly the user's favorite, it gets **1 point**.
-- It then checks **energy** (how intense the song feels, from 0 to 1). The closer the song is to the user's target, the more of **1 bonus point** it earns. A perfect match earns the full point; a song that is far off earns little.
+- If the song's **genre** is exactly the user's favorite, it gets **2 points**. If it's a close cousin (indie pop for a pop fan, lofi for a hip-hop fan, metal for a rock fan), it gets **1 point**.
+- If the song's **mood** is exactly the user's favorite, it gets **1 point**. A close cousin (relaxed for chill, angry for intense) gets **half a point**.
+- It then checks **energy** (how intense the song feels, from 0 to 1). The closer the song is to the user's target, the more of **1 bonus point** it earns.
 
-After every song has a score, the list is sorted from highest to lowest and the top 5 are shown, along with a "Why" line listing exactly which points each song earned.
+After every song has a score, the list is sorted from highest to lowest and the top 5 are shown in a table, with a "Why" column listing exactly which points each song earned.
 
-**Changes from the starter:** implemented CSV loading with number conversion, the scoring rule above, sorting/ranking, readable explanations, five test profiles, and a switchable weight experiment (`--experiment`). There are deliberately no penalty points: subtracting points from mismatches would just be a hidden way of making genre matter more.
+**Optional diversity mode:** the top 5 is picked one song at a time, and a song loses 1 point if its artist is already on the list and half a point for each song of its genre already on the list.
+
+**Changes from the starter:** CSV loading with number conversion, the scoring rule above, partial credit for related labels, sorting/ranking, readable explanations in a table, five test profiles, and two switchable modes (`--experiment` weight shift, `--diverse` penalty). There are deliberately no penalty points for mismatches: subtracting points from misses would just be a hidden way of making genre matter more.
 
 ---
 
@@ -41,15 +43,19 @@ After every song has a score, the list is sorted from highest to lowest and the 
 
 ## 5. Strengths
 
-- **Clear-cut tastes work well.** When a song matches genre, mood, and energy (e.g. *Storm Runner* for the rock profile, *Iron Reps* for the gym profile), it lands at #1 with a near-perfect 3.9+ score.
-- **Fully explainable.** Every score can be traced line by line in the "Why" output, which makes errors easy to spot.
-- **Energy closeness works as designed.** It rewards songs *near* the target, so a chill listener isn't pushed toward the loudest tracks.
+- **Clear-cut tastes work well.** When a song matches genre, mood, and energy (e.g. *Storm Runner* for rock, *Iron Reps* for gym, *Velvet Corners* for chill hip-hop), it lands at #1 with a 3.9+ score.
+- **Fully explainable.** Every score can be traced point by point in the "Why" column, which made each bias in this card easy to find.
+- **Near-misses aren't thrown away.** Partial credit lets "indie pop" and "relaxed" count for something, which matches how people actually describe music.
 
 ---
 
 ## 6. Limitations and Bias
 
-The biggest weakness found is **genre dominance**: because a genre match (+2) is worth twice a mood match (+1), genre can override vibe. For the chill hip-hop profile, *Iron Reps*, a 0.94-energy gym track, ranked **#3**, above two genuinely chill lofi songs, purely because it is labeled hip-hop. The system also uses **exact text matching**, so *Rooftop Lights* ("indie pop") gets zero genre credit from a pop fan, and "relaxed" gets no credit as a near-match for "chill". High-energy songs like *Gym Hero* show up for **four of the five profiles**, a small version of a "filter bubble" where the same tracks keep resurfacing. Finally, genres with only one song in the catalog (most of them) can never fill a top 5, so users with niche tastes are underserved.
+The biggest weakness found was **genre dominance with exact matching**. In the first version, *Iron Reps*, a 0.94-energy gym track, ranked #3 for a *chill* hip-hop listener only because of its genre label, while *Rooftop Lights* ("indie pop") got zero credit from a pop fan. Partial credit fixed both cases, but the weighting still favors genre: the gym profile still gets two chill hip-hop songs at #2–#3. The genre and mood "families" are hand-chosen, so they bake one person's opinion of which styles are related into the scores. High-energy songs like *Gym Hero* appear in **four of five profiles**, a small "filter bubble" where the same tracks keep resurfacing for different people. Most genres have only one song, so listeners with niche tastes are underserved no matter how the weights are set.
+
+### Diversity penalty and fairness
+
+Without a diversity rule, a top 5 can fill up with one artist or one genre, which over-rewards whatever is most common in the catalog. The `--diverse` mode subtracts points for repeat artists (−1.0) and repeat genres (−0.5 each) *while* the list is being built, so the second lofi track has to beat a different-genre song on adjusted score to earn a slot. For the chill profile this replaced a second LoRoom track with an ambient song, widening the list across three genres. The trade-off: for the gym profile it let in a chill lofi track at #5, a worse fit. It improves **variety within one list**, but it does **not** stop *Gym Hero* from appearing across many users' lists. That would need a cross-user rule.
 
 ---
 
@@ -61,14 +67,18 @@ The biggest weakness found is **genre dominance**: because a genre match (+2) is
 
 **Comparisons between profiles:**
 
-- **Kyle (chill hip-hop) vs. Gym (intense hip-hop):** Same genre, opposite energy. Both lists are led by hip-hop, but the #1 flips: *Velvet Corners* (0.38 energy) for chill, *Iron Reps* (0.94) for gym. This makes sense because mood and energy are the only things separating them. The surprise is that each profile still gets the *other's* signature song at #3, because genre points outweigh the energy gap.
-- **High-Energy Pop vs. Deep Intense Rock:** Both want high energy, so *Gym Hero* appears in both. For pop it ranks #2 through the genre match; for rock it ranks #2 through the mood match ("intense"). Same song, two different reasons, which shows how a single high-energy track can slip into many lists.
-- **Gym vs. Deep Intense Rock:** Both share the "intense" mood, so *Storm Runner*, *Iron Reps*, and *Gym Hero* appear in both lists, just in different orders. Genre decides who gets #1.
-- **High-Energy Pop vs. Sad but Hyped (adversarial):** Both ask for pop, so the pop songs dominate both. The only "sad" song (*Salt and Sorrow*, a quiet folk track) climbs to #3 on mood alone even though its energy is far off. The system cannot satisfy contradictory requests, so it falls back on genre.
+- **Kyle (chill hip-hop) vs. Gym (intense hip-hop):** Same genre, opposite energy. The #1 flips: *Velvet Corners* (0.38 energy) for chill, *Iron Reps* (0.94) for gym. The chill list fills out with chill lofi tracks (related genre plus mood match). The gym list, though, still pulls in the two *calmer* hip-hop songs at #2–#3 on genre points alone, ahead of intense rock and pop. The genre bonus is strong enough to override a 0.5 energy gap.
+- **High-Energy Pop vs. Deep Intense Rock:** Both want high energy, so *Gym Hero* appears in both: through the genre match for pop, through the "intense" mood match for rock. Same song, two different reasons, which shows how one high-energy track slips into many lists.
+- **Gym vs. Deep Intense Rock:** They share the "intense" mood, so *Storm Runner*, *Iron Reps*, and *Gym Hero* appear in both lists in different orders. Genre decides #1. *Broken Static* (metal) now shows up for rock through the rock–metal family.
+- **High-Energy Pop vs. Sad but Hyped (adversarial):** Both ask for pop, so pop songs dominate both lists. No song is both sad and high-energy, so the system falls back on genre and energy. The only truly sad song (*Salt and Sorrow*) sits at #4 because its energy is far off. Contradictory requests get the "least wrong" answer, not a good one.
 
-**Why does *Gym Hero* keep showing up for people who want "Happy Pop"?** It is labeled pop, so it gets the big +2 genre bonus, and its energy (0.93) is close to the 0.8 target. The system cannot tell that "intense workout pop" and "happy pop" feel different, because the mood bonus (+1) is smaller than the genre bonus.
+**Why does *Gym Hero* keep showing up for people who want "Happy Pop"?** It's labeled pop, so it gets the big +2 genre bonus, and its energy (0.93) is near the 0.8 target. The system can't tell "intense workout pop" from "happy pop" well, because the mood bonus (+1) is smaller than the genre bonus.
 
-**Experiment (weight shift):** Halving genre (2→1) and doubling energy (1→2) removed *Iron Reps* from the chill listener's top 5 and moved *Rooftop Lights* up to #2 for happy pop. Recommendations became **more accurate** for vibe-based listeners, at the cost of weaker genre loyalty.
+**Experiments:**
+
+1. **Partial label credit:** removed *Iron Reps* from the chill top 5 and moved *Rooftop Lights* to #2 for happy pop. Kept as the default.
+2. **Weight shift** (genre 2→1, energy 1→2): pushed chill lofi songs above "relaxed" hip-hop for Kyle, making the list more about vibe than genre. Recommendations got **more accurate** for vibe-based listeners, at the cost of genre loyalty.
+3. **Diversity penalty:** more variety per list, with an occasional weaker fit (see section 6).
 
 **Automated tests:** `pytest`; both starter tests pass (pop/happy song ranks first; explanations are non-empty).
 
@@ -76,9 +86,9 @@ The biggest weakness found is **genre dominance**: because a genre match (+2) is
 
 ## 8. Future Work
 
-- **Partial credit for similar labels:** treat "indie pop" as close to "pop" and "relaxed" as close to "chill", instead of all-or-nothing matches.
+- **Cross-user diversity:** track how often a song is recommended across all users and gently down-rank "everywhere" songs like *Gym Hero*.
 - **Use the unused features:** score `likes_acoustic` against acousticness, and add tempo and valence closeness.
-- **Diversity rule:** penalize repeating the same artist or genre in the top 5, so lists aren't five near-identical songs.
+- **Learn the families instead of hand-picking them:** group genres and moods by their audio features rather than one person's opinion.
 
 ---
 

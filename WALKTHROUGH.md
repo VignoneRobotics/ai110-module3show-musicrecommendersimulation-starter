@@ -1,6 +1,6 @@
 # 🧭 Walkthrough: How This Project Was Built (Side-by-Side Reference)
 
-A step-by-step record of the redo. Each step shows **where** the work happened, **what** was done, **why**, and which **rubric item** it earns.
+A step-by-step record of how this project was built. Each step shows **where** the work happened, **what** was done, **why**, and which **rubric item** it earns.
 
 **Where legend:** 🌐 GitHub (browser) · 💻 Terminal (VS Code, PowerShell) · 📝 Editor (VS Code) · 🤖 AI assistant (Claude)
 
@@ -60,6 +60,17 @@ A step-by-step record of the redo. Each step shows **where** the work happened, 
 
 **Commit:** `git add README.md model_card.md` → `git commit -m "Document design, sample output, profile experiments, and bias analysis"`
 
+## Extensions: Partial Credit, Diversity, Summary Table
+
+| # | Where | What we did | Why | Rubric |
+|---|---|---|---|---|
+| X.1 | 📝 | Added `RELATED_GENRES` / `RELATED_MOODS` families and `_label_points()`: exact match = full weight, same family = half | Fixes the exact-match bias found in Phase 4 (*Iron Reps* #3 for a chill listener; "indie pop" scored 0 for a pop fan). Partial credit *narrows* gaps for near-misses, the opposite of a mismatch penalty. | Scoring reflects preferences |
+| X.2 | 📝 | Added `_diversify()`: greedy re-pick with −1.0 per repeat artist, −0.5 per repeat genre; `--diverse` flag | A plain top-k can be five near-identical songs. Greedy = pick the best *adjusted* score, update the penalties, repeat. | Stretch: diversity/fairness (+2) |
+| X.3 | 📝 | Replaced plain prints with a `tabulate` table (`simple_grid`), one reason per line; added `tabulate` to `requirements.txt` | Easier to scan; the "Why" column makes every score auditable. | Stretch: summary table (+2) |
+| X.4 | 💻 | Re-ran all modes and regenerated README output; updated model card §3–§8 | Docs must match the code that actually runs. | Explanations, Profiles, Model card |
+
+**Commit:** `git add src/ requirements.txt` → `git commit -m "Add partial label credit, diversity penalty, and tabulate summary table"`, then `git add README.md model_card.md WALKTHROUGH.md` → `git commit -m "Update docs for partial credit, diversity mode, and table output"`
+
 ## Phase 5: Reflection and Model Card
 
 | # | Where | What we did | Why | Rubric |
@@ -82,5 +93,5 @@ A step-by-step record of the redo. Each step shows **where** the work happened, 
 | Explanations for recommendations | "Why:" lines in README *Sample Output* |
 | Experiments with multiple profiles | README *Sample Output* + *Experiments*, model card §7 |
 | Completed model card | `model_card.md` |
-
-Stretch features: not attempted.
+| Stretch: Diversity/fairness (+2) | `_diversify()` in `src/recommender.py`; model card §6 *Diversity penalty and fairness* |
+| Stretch: Visual summary table (+2) | `print_recommendations()` in `src/main.py` (`tabulate`) |
